@@ -1,6 +1,9 @@
 ## Ibiro - A crowdfunding Dapp
 Website: http://ibiro-app.netlify.com
 Frontend: https://github.com/The-FutureX/ibiro
+
+## NOTE: Use Goerli Network to test & Pinata for image url
+
 ## Building the project
 
 After any changes to the contract, run:

@@ -4,26 +4,28 @@ pragma solidity ^0.8.9;
 contract CrowdFunding {
     struct Campaign {
         address creator;
-        string title;
+        string name;
         string description;
-        uint256 target;
-        uint256 deadline;
-        uint256 amountCollected;
+        uint goal;
+        uint createdAt;
+        uint deadline;
+        uint pledged;
         string image;
         address[] donators;
-        uint256[] donations;
+        uint[] donations;
     }
 
-        mapping(uint256 => Campaign) public campaigns;
+    mapping(uint => Campaign) public campaigns;
 
-    uint256 public numberOfCampaigns = 0;
+    uint256 public campaignCounts = 0;
 
     function createCampaign(
         address _creator,
-        string memory _title,
+        string memory _name,
         string memory _description,
-        uint256 _target,
-        uint256 _deadline,
+        uint _goal,
+        uint _created_at,
+        uint _deadline,
         string memory _image
     ) public returns (uint256) {
         Campaign storage campaign = campaigns[numberOfCampaigns];
@@ -34,19 +36,20 @@ contract CrowdFunding {
         );
 
         campaign.creator = _creator;
-        campaign.title = _title;
+        campaign.name = _name;
         campaign.description = _description;
-        campaign.target = _target;
+        campaign.goal = _goal;
+        campaign.createdAt = _created_at;
         campaign.deadline = _deadline;
-        campaign.amountCollected = 0;
+        campaign.pledged = 0;
         campaign.image = _image;
 
-        numberOfCampaigns++;
+        campaignCounts++;
 
-        return numberOfCampaigns - 1;
+        return campaignCounts - 1;
     }
 
-    function donateToCampaign(uint256 _id) public payable {
+    function pledge(uint256 _id) public payable {
         uint256 amount = msg.value;
 
         Campaign storage campaign = campaigns[_id];
@@ -57,7 +60,7 @@ contract CrowdFunding {
         (bool sent,) = payable(campaign.creator).call{value: amount}("");
 
         if(sent) {
-            campaign.amountCollected = campaign.amountCollected + amount;
+            campaign.pledged = campaign.pledged + amount;
         }
     }
 

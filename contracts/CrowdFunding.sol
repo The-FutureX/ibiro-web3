@@ -32,10 +32,9 @@ contract CrowdFunding {
     ) public returns (uint256) {
         Campaign storage campaign = campaigns[campaignCounts];
 
-        require(
-            campaign.deadline < block.timestamp,
-            "Deadline time is invalid, should be time in the future."
-        );
+        require(campaign.createdAt>= block.timestamp,"Created time is less than current Block Timestamp");
+        require(campaign.deadline > campaign.createdAt,"End time is less than Start time");
+        require(campaign.deadline <= block.timestamp, "Deadline time is invalid, should be time in the future.");
 
         campaign.creator = _creator;
         campaign.name = _name;

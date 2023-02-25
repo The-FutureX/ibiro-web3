@@ -9,7 +9,7 @@ contract CrowdFunding {
         uint goal;
         uint createdAt;
         uint deadline;
-        uint pledged;
+        uint amountCollected;
         string image;
         address[] donators;
         uint[] donations;
@@ -41,7 +41,7 @@ contract CrowdFunding {
         campaign.goal = _goal;
         campaign.createdAt = _created_at;
         campaign.deadline = _deadline;
-        campaign.pledged = 0;
+        campaign.amountCollected = 0;
         campaign.image = _image;
 
         campaignCounts++;
@@ -60,7 +60,7 @@ contract CrowdFunding {
         (bool sent,) = payable(campaign.creator).call{value: amount}("");
 
         if(sent) {
-            campaign.pledged = campaign.pledged + amount;
+            campaign.amountCollected = campaign.amountCollected + amount;
         }
     }
 

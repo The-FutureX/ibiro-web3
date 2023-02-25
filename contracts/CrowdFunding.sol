@@ -17,8 +17,10 @@ contract CrowdFunding {
 
     mapping(uint => Campaign) public campaigns;
 
-    uint256 public campaignCounts = 0;
+    // Number of campaigns
+    uint public campaignCounts = 0;
 
+    // Create campaign
     function createCampaign(
         address _creator,
         string memory _name,
@@ -28,11 +30,11 @@ contract CrowdFunding {
         uint _deadline,
         string memory _image
     ) public returns (uint256) {
-        Campaign storage campaign = campaigns[numberOfCampaigns];
+        Campaign storage campaign = campaigns[campaignCounts];
 
         require(
             campaign.deadline < block.timestamp,
-            "The deadline should be a date in the future."
+            "Deadline time is invalid, should be time in the future."
         );
 
         campaign.creator = _creator;
@@ -49,7 +51,7 @@ contract CrowdFunding {
         return campaignCounts - 1;
     }
 
-    function pledge(uint256 _id) public payable {
+    function createCampaign(uint256 _id) public payable {
         uint256 amount = msg.value;
 
         Campaign storage campaign = campaigns[_id];

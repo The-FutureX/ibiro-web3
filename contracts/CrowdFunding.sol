@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.10;
+pragma solidity ^0.8.9;
 
 contract CrowdFunding {
     // Creating Structs for Campaign
@@ -31,12 +31,13 @@ contract CrowdFunding {
         uint _deadline,
         string memory _image
     ) public returns (uint) {
+        Campaign storage campaign = campaigns[campaignCounts];
         // Validate few fields
         //require(campaign.createdAt > block.timestamp,"Created time is less than current Block Timestamp");
         // require(campaign.deadline < campaign.createdAt,"Deadline is less than Start time");
-        require(Campaign.deadline < block.timestamp, "Deadline time is invalid, should be latter time.");
-
-        Campaign storage campaign = campaigns[campaignCounts];
+        require(
+            campaign.deadline < block.timestamp, "Deadline time is invalid, should be latter time."
+        );
 
         campaign.creator = _creator;
         campaign.name = _name;
@@ -59,8 +60,12 @@ contract CrowdFunding {
         Campaign storage campaign = campaigns[_id];
 
         // Validate fields..
-        require(block.timestamp >= campaign.createdAt, "Campaign has not Started yet");
-        require(block.timestamp <= campaign.deadline, "Campaign has already ended");
+//        require(
+//            block.timestamp >= campaign.createdAt, "Campaign has not Started yet"
+//        );
+        require(
+            block.timestamp <= campaign.deadline, "Campaign has already ended"
+        );
 
         campaign.pledgers.push(msg.sender);
         campaign.pledges.push(amount);

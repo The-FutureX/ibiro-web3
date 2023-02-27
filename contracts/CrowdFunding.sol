@@ -57,6 +57,11 @@ contract CrowdFunding {
     ) public payable {
         uint amount = msg.value;
         Campaign storage campaign = campaigns[_id];
+
+        // Validate fields..
+        require(block.timestamp >= campaign.createdAt, "Campaign has not Started yet");
+        require(block.timestamp <= campaign.deadline, "Campaign has already ended");
+
         campaign.pledgers.push(msg.sender);
         campaign.pledges.push(amount);
         (bool pledged,) = payable(campaign.creator).call{value: amount}("");

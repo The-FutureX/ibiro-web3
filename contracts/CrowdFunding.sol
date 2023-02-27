@@ -21,7 +21,7 @@ contract CrowdFunding {
     // Number of campaigns
     uint public campaignCounts = 0;
 
-    // Adding new campaign
+    // Adding new campaign to the blockchain network
     function newCampaign(
         address _creator,
         string memory _name,

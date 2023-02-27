@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.10;
 
 contract CrowdFunding {
+    // Creating Structs for Campaign
     struct Campaign {
         address creator;
         string name;
@@ -20,8 +21,8 @@ contract CrowdFunding {
     // Number of campaigns
     uint public campaignCounts = 0;
 
-    // Create campaign
-    function createCampaign(
+    // Adding new campaign
+    function newCampaign(
         address _creator,
         string memory _name,
         string memory _description,
@@ -29,12 +30,13 @@ contract CrowdFunding {
         uint _created_at,
         uint _deadline,
         string memory _image
-    ) public returns (uint256) {
-        Campaign storage campaign = campaigns[campaignCounts];
-
-    //    require(campaign.createdAt > block.timestamp,"Created time is less than current Block Timestamp");
+    ) public returns (uint) {
+        // Validate few fields
+        //require(campaign.createdAt > block.timestamp,"Created time is less than current Block Timestamp");
         // require(campaign.deadline < campaign.createdAt,"Deadline is less than Start time");
-        require(campaign.deadline < block.timestamp, "Deadline time is invalid, should be time in the future.");
+        require(Campaign.deadline < block.timestamp, "Deadline time is invalid, should be latter time.");
+
+        Campaign storage campaign = campaigns[campaignCounts];
 
         campaign.creator = _creator;
         campaign.name = _name;
@@ -46,30 +48,42 @@ contract CrowdFunding {
         campaign.image = _image;
 
         campaignCounts++;
-
         return campaignCounts - 1;
     }
 
-    function pledge(uint256 _id) public payable {
-        uint256 amount = msg.value;
-
+    // Pledge to a campaign
+    function pledge(
+        uint _id
+    ) public payable {
+        uint amount = msg.value;
         Campaign storage campaign = campaigns[_id];
-
         campaign.pledgers.push(msg.sender);
         campaign.pledges.push(amount);
-
-        (bool sent,) = payable(campaign.creator).call{value: amount}("");
-
-        if(sent) {
+        (bool pledged,) = payable(campaign.creator).call{value: amount}("");
+        // User has pledged an amount
+        if(pledged) {
             campaign.amountCollected = campaign.amountCollected + amount;
         }
     }
 
-    function getPledgers(uint256 _id) view public returns (address[] memory, uint256[] memory) {
-        return (campaigns[_id].pledgers, campaigns[_id].pledges);
+    // Get Campaign pledgers.
+    function getPledgers(
+        uint _id
+    ) view public returns (
+        address[] memory,
+        uint[] memory
+    ) {
+        return (
+        campaigns[_id].pledgers,
+        campaigns[_id].pledges
+        );
     }
 
-    function getCampaigns() public view returns (Campaign[] memory) {
+    // Return all campaign records for the blockchain.
+    function getCampaigns() public view returns (
+        Campaign[] memory
+    ) {
+         // Get campaigns..
         Campaign[] memory Campaigns = new Campaign[](campaignCounts);
         for(uint i = 0; i < campaignCounts; i++) {
             Campaign storage item = campaigns[i];

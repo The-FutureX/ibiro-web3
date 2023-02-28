@@ -17,6 +17,7 @@ contract CrowdFunding {
     }
 
     mapping(uint => Campaign) public campaigns;
+    mapping(uint => mapping(address => uint)) public pledgedAmount;
 
     // Number of campaigns
     uint public campaignCounts = 0;
@@ -52,6 +53,20 @@ contract CrowdFunding {
         return campaignCounts - 1;
     }
 
+    // To cancel campaign
+    // This doesn't delete the record
+    // But, it kinda set the status to false/0..
+    // TODO: to be implemented later in UI..
+    function cancelCampaign(
+        uint _id
+    ) external {
+        Campaign memory campaign = campaigns[_id];
+        require(campaign.creator == msg.sender, "You're not the owner of this campaign");
+        require(block.timestamp < campaign.createdAt, "Campaign already in progress");
+
+        delete campaigns[_id];
+    }
+
     // Pledge to a campaign
     function pledge(
         uint _id
@@ -75,6 +90,26 @@ contract CrowdFunding {
             campaign.amountCollected = campaign.amountCollected + amount;
         }
     }
+
+    // To pledged
+//    function unPledge(
+//        uint _id,
+//        uint amount
+//    ) external {
+//        Campaign storage campaign = campaigns[_id];
+////        require(
+////            block.timestamp >= campaign.createdAtAt, "Campaign not started"
+////        );
+//        require(
+//            block.timestamp <= campaign.deadline, "Campaign has already ended"
+//        );
+//        require(
+//            pledgedAmount[_id][msg.sender] >= amount,"You did not pledge enough token to be withdraw"
+//        );
+//
+//        campaign.amountCollected -= amount;
+//        pledgedAmount[_id][msg.sender] -= amount;
+//    }
 
     // Get Campaign pledgers.
     function getPledgers(
